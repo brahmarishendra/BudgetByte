@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/Budget tracking system.iml" filepath="$PROJECT_DIR$/.idea/Budget tracking system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BudgetByte.iml" filepath="$PROJECT_DIR$/.idea/modules/BudgetByte.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BudgetByte.main.iml" filepath="$PROJECT_DIR$/.idea/modules/BudgetByte.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BudgetByte.test.iml" filepath="$PROJECT_DIR$/.idea/modules/BudgetByte.test.iml" />
+    </modules>
+  </component>
+</project>

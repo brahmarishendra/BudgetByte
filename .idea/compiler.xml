@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="BudgetByte" target="17" />
+      <module name="BudgetByte.main" target="17" />
+      <module name="BudgetByte.test" target="17" />
+      <module name="BudgetByte_" target="17" />
+      <module name="BudgetByte_.main" target="17" />
+      <module name="BudgetByte_.test" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="BudgetByte" options="-parameters" />
+      <module name="BudgetByte.main" options="-parameters" />
+      <module name="BudgetByte.test" options="-parameters" />
+      <module name="BudgetByte_" options="-parameters" />
+      <module name="BudgetByte_.main" options="-parameters" />
+      <module name="BudgetByte_.test" options="-parameters" />
+    </option>
+  </component>
+</project>
