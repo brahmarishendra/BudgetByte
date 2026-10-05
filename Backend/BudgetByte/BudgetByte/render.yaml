@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: budgetbyte-backend
+    env: docker
+    buildCommand: docker build -t YOUR_DOCKERHUB_USERNAME/your-app-name:latest .
+    # You might not need a startCommand if your Dockerfile's ENTRYPOINT is sufficient
+    # If your application needs specific commands to start, specify them here
+    # For example, if your ENTRYPOINT is just 'java -jar app.jar', it's sufficient.
+    # startCommand: java -jar app.jar
+    envVars:
+      - key: DATABASE_URL
+        value: # Your database URL
+      - key: DATABASE_USERNAME
+        value: # Your database username
+      - key: DATABASE_PASSWORD
+        value: # Your database password
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+    # Add other environment variables specific to your Spring Boot app
+    healthCheckPath: /actuator/health # Assuming you have Spring Boot Actuator for health checks
+    # port: 8080 # This should match the port your Spring Boot app listens on
