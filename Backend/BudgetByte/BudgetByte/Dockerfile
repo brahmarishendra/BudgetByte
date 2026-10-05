@@ -7,7 +7,7 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 # Use a smaller JRE image to run the application
-FROM openjdk:11-jre-slim
+FROM openjdk:11-jre-slim-buster
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
