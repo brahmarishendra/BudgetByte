@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  backend:
+    image: brahmarishi/budgetbyte:backend-latest
+    container_name: budgetbyte-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/budgetbyte
+      - SPRING_DATASOURCE_USERNAME=budgetuser
+      - SPRING_DATASOURCE_PASSWORD=budgetpass
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - postgres
+    networks:
+      - budgetbyte-net
+    restart: always
+
+  frontend:
+    image: brahmarishi/budgetbyte:frontend-latest
+    container_name: budgetbyte-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - budgetbyte-net
+    restart: always
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: budgetbyte-db
+    environment:
+      - POSTGRES_DB=budgetbyte
+      - POSTGRES_USER=budgetuser
+      - POSTGRES_PASSWORD=budgetpass
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - budgetbyte-net
+    restart: always
+
+volumes:
+  postgres-data:
+
+networks:
+  budgetbyte-net:
+    driver: bridge
