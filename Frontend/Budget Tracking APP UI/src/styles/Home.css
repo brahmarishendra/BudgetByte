@@ -1463,7 +1463,7 @@
   width: calc(100% - 26px);
   max-width: 360px;
   height: 58px;
-    background: linear-gradient(135deg, #fcfcfc10, #18181826);
+    background: linear-gradient(135deg, #fcfcfc17, #18181826);
     opacity: 0.98;
   /*background: rgba(7, 7, 7, 0.086);*/
   border: 1px solid rgba(255, 255, 255, 0.35);
