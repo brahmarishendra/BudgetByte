@@ -38,8 +38,8 @@ Add these to **Render Dashboard → Environment** (not as secrets unless marked)
 
 | Key | Value | Scope | Notes |
 |-----|-------|-------|-------|
-| `VITE_API_URL` | `https://budgetbyte-backend.onrender.com/api` | Public | Backend API endpoint |
-| `VITE_API_BASE_URL` | `https://budgetbyte-backend.onrender.com` | Public | Base URL for requests |
+| `VITE_API_URL` | `https://budgetbyte.onrender.com/api` | Public | Backend API endpoint |
+| `VITE_API_BASE_URL` | `https://budgetbyte.onrender.com` | Public | Base URL for requests |
 | `VITE_API_TIMEOUT` | `30000` | Public | Timeout in milliseconds |
 | `VITE_DEBUG` | `false` | Public | Disable debug in production |
 | `VITE_LOG_LEVEL` | `info` | Public | Logging level |
@@ -130,7 +130,7 @@ server {
     }
 
     location /api {
-        proxy_pass https://budgetbyte-backend.onrender.com/api;
+        proxy_pass https://budgetbyte.onrender.com/api;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -174,7 +174,7 @@ If using `render.yaml` in repo root, update the frontend service:
   port: 80
   envVars:
     - key: VITE_API_URL
-      value: https://budgetbyte-backend.onrender.com/api
+      value: https://budgetbyte.onrender.com/api
     - key: NODE_ENV
       value: production
   healthCheck:

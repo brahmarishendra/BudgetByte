@@ -50,8 +50,8 @@
 6. **Port:** `80`
 7. **Environment Variables:**
    ```
-   BACKEND_URL=https://budgetbyte-backend.onrender.com
-   VITE_API_URL=https://budgetbyte-backend.onrender.com/api
+   BACKEND_URL=https://budgetbyte.onrender.com
+   VITE_API_URL=https://budgetbyte.onrender.com/api
    ```
 8. **Health Check Path:** `/`
 9. **Plan:** Free
@@ -72,7 +72,7 @@
 ### Networking
 - Services on the same Render deployment communicate via internal DNS
 - From **frontend** to **backend:** `http://budgetbyte-backend:8080` (internal)
-- From **external clients:** `https://budgetbyte-backend.onrender.com` (public)
+- From **external clients:** `https://budgetbyte.onrender.com` (public)
 
 ### CORS Configuration
 - Update your Spring Boot `application.properties` if needed:
@@ -103,7 +103,7 @@
 3. Test connection locally: `psql postgresql://user:[REDACTED]@host:5432/db`
 
 ### Frontend can't reach backend
-1. Use the **public URL** of backend service: `https://budgetbyte-backend.onrender.com`
+1. Use the **public URL** of backend service: `https://budgetbyte.onrender.com`
 2. Check **CORS settings** in Spring Boot
 3. Verify **Nginx proxy config** forwards to correct backend URL
 
@@ -115,11 +115,11 @@
 ## Deployment URLs
 Once deployed, your services will be available at:
 - **Frontend:** `https://budgetbyte-frontend.onrender.com`
-- **Backend API:** `https://budgetbyte-backend.onrender.com`
+- **Backend API:** `https://budgetbyte.onrender.com`
 - **Database:** Internal only (use External URL connection string)
 
 ## Next Steps
-1. Test API endpoints: `curl https://budgetbyte-backend.onrender.com/api/health`
+1. Test API endpoints: `curl https://budgetbyte.onrender.com/api/health`
 2. Visit frontend: `https://budgetbyte-frontend.onrender.com`
 3. Monitor logs in Render Dashboard → **Logs** tab
 4. Set up custom domain (optional): Render Dashboard → **Settings** → **Custom Domains**
