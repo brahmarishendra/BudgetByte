@@ -5,6 +5,8 @@ services:
     image:
       fromRegistry:
         name: postgres:16-alpine
+    plan: free
+    region: oregon
     envVars:
       - key: POSTGRES_DB
         value: budgetbyte
@@ -21,13 +23,19 @@ services:
   # Backend API (Java/Spring Boot)
   - type: webservice
     name: budgetbyte-backend
+    plan: free
+    region: oregon
+    runtime: docker
+    rootDir: Backend/BudgetByte/BudgetByte
+    dockerfilePath: Dockerfile
+    dockerBuildContext: .
     image:
       fromRegistry:
         name: brahmarishi/budgetbyte:backend-latest
     port: 8080
     envVars:
       - key: SPRING_DATASOURCE_URL
-        value: postgresql://budgetbyte-db:5432/budgetbyte
+        value: postgresql://budgetuser:${POSTGRES_PASSWORD}@budgetbyte-db:5432/budgetbyte
       - key: SPRING_DATASOURCE_USERNAME
         value: budgetuser
       - key: SPRING_DATASOURCE_PASSWORD
@@ -35,6 +43,8 @@ services:
         sync: false
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
         value: update
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
     healthCheck:
       path: /actuator/health
       initialDelaySeconds: 30
@@ -42,15 +52,26 @@ services:
       timeoutSeconds: 5
       maxFailedHealthChecks: 3
     autoDeploy: true
+    buildFilter:
+      paths:
+        - Backend/BudgetByte/BudgetByte/**
 
   # Frontend (Nginx + Vue)
   - type: webservice
     name: budgetbyte-frontend
+    plan: free
+    region: oregon
+    runtime: docker
+    rootDir: Frontend/Budget Tracking APP UI
+    dockerfilePath: Dockerfile
+    dockerBuildContext: .
     image:
       fromRegistry:
         name: brahmarishi/budgetbyte:frontend-latest
     port: 80
     envVars:
+      - key: VITE_API_URL
+        value: https://budgetbyte-backend.onrender.com/api
       - key: BACKEND_URL
         value: https://budgetbyte-backend.onrender.com
     healthCheck:
@@ -60,16 +81,12 @@ services:
       timeoutSeconds: 5
       maxFailedHealthChecks: 3
     autoDeploy: true
-    routes:
-      - type: http
-        source: /
-        destination: /
-      - type: http
-        source: /api
-        destination: http://budgetbyte-backend:8080/api
+    buildFilter:
+      paths:
+        - "Frontend/Budget Tracking APP UI/**"
 
 databases:
   - name: budgetbyte-db
     databaseName: budgetbyte
     user: budgetuser
-    plan: free
+    region: oregon
