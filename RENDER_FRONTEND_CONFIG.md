@@ -143,13 +143,43 @@ server {
 
 ---
 
-### 10. Troubleshooting
+### 10. SPA Routing & 404 on Page Refresh (CRITICAL)
+
+Because Vue Router uses HTML5 history mode (`createWebHistory()`), refreshing any page like `/login` or `/home` or visiting direct URLs will cause Render to return a **404 Not Found** error unless a Rewrite rule is added.
+
+#### If deployed as a Render Static Site (Dashboard):
+1. Open the [Render Dashboard](https://dashboard.render.com).
+2. Select your frontend static site (`budgetbyte-1` or `budgetbyte-frontend`).
+3. In the left navigation, click **Redirects / Rewrites**.
+4. Click **Add Rule** and enter:
+   - **Type / Action:** `Rewrite`
+   - **Source:** `/*`
+   - **Destination:** `/index.html`
+5. Click **Save Changes**. (Changes take effect immediately without needing a rebuild).
+
+#### If configured in `render.yaml`:
+```yaml
+  - type: static
+    name: budgetbyte-frontend
+    rootDir: Frontend/Budget Tracking APP UI
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+```
+
+---
+
+### 11. Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
+| **404 Not Found on `/login`, `/home`, or page refresh** | Add Rewrite rule in Render: Source `/*` -> Destination `/index.html` (Action: `Rewrite`). |
 | Build fails: `npm ci not found` | Use `npm install` instead; Render may not have npm ci |
 | Static files 404 | Verify Publish Directory = `dist` |
-| API calls fail from frontend | Check `VITE_API_URL` is set & matches backend domain |
+| API calls fail from frontend | Check `VITE_API_BASE_URL` or `VITE_API_URL` matches backend domain |
 | Nginx shows 502 | Backend service may be unavailable; check backend logs |
 | Slow builds | Free tier has limited CPU; consider Starter plan |
 

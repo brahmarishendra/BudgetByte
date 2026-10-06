@@ -56,30 +56,21 @@ services:
       paths:
         - Backend/BudgetByte/BudgetByte/**
 
-  # Frontend (Nginx + Vue)
-  - type: webservice
+  # Frontend (Vue SPA Static Site)
+  - type: static
     name: budgetbyte-frontend
-    plan: free
-    region: oregon
-    runtime: docker
     rootDir: Frontend/Budget Tracking APP UI
-    dockerfilePath: Dockerfile
-    dockerBuildContext: .
-    image:
-      fromRegistry:
-        name: brahmarishi/budgetbyte:frontend-latest
-    port: 80
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
         value: https://budgetbyte.onrender.com/api
-      - key: BACKEND_URL
+      - key: VITE_API_BASE_URL
         value: https://budgetbyte.onrender.com
-    healthCheck:
-      path: /
-      initialDelaySeconds: 10
-      intervalSeconds: 10
-      timeoutSeconds: 5
-      maxFailedHealthChecks: 3
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     autoDeploy: true
     buildFilter:
       paths:
