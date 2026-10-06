@@ -1,0 +1,75 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: budgetbyte-db
+    image:
+      fromRegistry:
+        name: postgres:16-alpine
+    envVars:
+      - key: POSTGRES_DB
+        value: budgetbyte
+      - key: POSTGRES_USER
+        value: budgetuser
+      - key: POSTGRES_PASSWORD
+        scope: project
+        sync: false
+    disk:
+      name: postgres-data
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 10
+
+  # Backend API (Java/Spring Boot)
+  - type: webservice
+    name: budgetbyte-backend
+    image:
+      fromRegistry:
+        name: brahmarishi/budgetbyte:backend-latest
+    port: 8080
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: postgresql://budgetbyte-db:5432/budgetbyte
+      - key: SPRING_DATASOURCE_USERNAME
+        value: budgetuser
+      - key: SPRING_DATASOURCE_PASSWORD
+        scope: project
+        sync: false
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+    healthCheck:
+      path: /actuator/health
+      initialDelaySeconds: 30
+      intervalSeconds: 10
+      timeoutSeconds: 5
+      maxFailedHealthChecks: 3
+    autoDeploy: true
+
+  # Frontend (Nginx + Vue)
+  - type: webservice
+    name: budgetbyte-frontend
+    image:
+      fromRegistry:
+        name: brahmarishi/budgetbyte:frontend-latest
+    port: 80
+    envVars:
+      - key: BACKEND_URL
+        value: https://budgetbyte-backend.onrender.com
+    healthCheck:
+      path: /
+      initialDelaySeconds: 10
+      intervalSeconds: 10
+      timeoutSeconds: 5
+      maxFailedHealthChecks: 3
+    autoDeploy: true
+    routes:
+      - type: http
+        source: /
+        destination: /
+      - type: http
+        source: /api
+        destination: http://budgetbyte-backend:8080/api
+
+databases:
+  - name: budgetbyte-db
+    databaseName: budgetbyte
+    user: budgetuser
+    plan: free

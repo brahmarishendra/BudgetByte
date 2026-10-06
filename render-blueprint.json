@@ -1,0 +1,67 @@
+{
+  "services": [
+    {
+      "type": "pserv",
+      "name": "budgetbyte-db",
+      "plan": "free",
+      "region": "oregon",
+      "ipAllowList": [],
+      "databaseName": "budgetbyte",
+      "user": "budgetuser",
+      "passwordEnvVar": "DATABASE_PASSWORD"
+    },
+    {
+      "type": "web",
+      "name": "budgetbyte-backend",
+      "plan": "free",
+      "region": "oregon",
+      "runtime": "docker",
+      "dockerImage": "brahmarishi/budgetbyte:backend-latest",
+      "dockerfilePath": "./Backend/BudgetByte/BudgetByte/Dockerfile",
+      "port": 8080,
+      "healthCheckPath": "/actuator/health",
+      "startCommand": "java -jar app.jar",
+      "envVars": [
+        {
+          "key": "SPRING_DATASOURCE_URL",
+          "value": "postgresql://budgetbyte-db:5432/budgetbyte"
+        },
+        {
+          "key": "SPRING_DATASOURCE_USERNAME",
+          "value": "budgetuser"
+        },
+        {
+          "key": "SPRING_DATASOURCE_PASSWORD",
+          "scope": "secret"
+        },
+        {
+          "key": "SPRING_JPA_HIBERNATE_DDL_AUTO",
+          "value": "update"
+        }
+      ],
+      "autoDeploy": true
+    },
+    {
+      "type": "web",
+      "name": "budgetbyte-frontend",
+      "plan": "free",
+      "region": "oregon",
+      "runtime": "docker",
+      "dockerImage": "brahmarishi/budgetbyte:frontend-latest",
+      "dockerfilePath": "./Frontend/Budget Tracking APP UI/Dockerfile",
+      "port": 80,
+      "healthCheckPath": "/",
+      "envVars": [
+        {
+          "key": "BACKEND_URL",
+          "value": "https://budgetbyte-backend.onrender.com"
+        },
+        {
+          "key": "VITE_API_URL",
+          "value": "https://budgetbyte-backend.onrender.com/api"
+        }
+      ],
+      "autoDeploy": true
+    }
+  ]
+}
