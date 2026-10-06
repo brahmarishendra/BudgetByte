@@ -29,10 +29,9 @@ services:
     rootDir: Backend/BudgetByte/BudgetByte
     dockerfilePath: Dockerfile
     dockerBuildContext: .
-    # To pull from Docker Hub instead of building from repo, uncomment below:
-    # image:
-    #   fromRegistry:
-    #     name: brahmarishi/budgetbyte:backend-latest
+    image:
+      fromRegistry:
+        name: brahmarishi/budgetbyte:backend-latest
     port: 8080
     envVars:
       - key: SPRING_DATASOURCE_URL
@@ -66,10 +65,9 @@ services:
     rootDir: Frontend/Budget Tracking APP UI
     dockerfilePath: Dockerfile
     dockerBuildContext: .
-    # To pull from Docker Hub instead of building from repo, uncomment below:
-    # image:
-    #   fromRegistry:
-    #     name: brahmarishi/budgetbyte:frontend-latest
+    image:
+      fromRegistry:
+        name: brahmarishi/budgetbyte:frontend-latest
     port: 80
     envVars:
       - key: VITE_API_URL
