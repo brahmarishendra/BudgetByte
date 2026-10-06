@@ -12,6 +12,23 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class HealthController {
 
+    @GetMapping("/")
+    public ResponseEntity<?> root() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "UP");
+        response.put("service", "BudgetByte Backend API");
+        response.put("version", "1.0.0");
+        response.put("endpoints", new String[]{
+            "/health",
+            "/actuator/health",
+            "/api/",
+            "/api/auth/signup",
+            "/api/auth/login",
+            "/api/transaction"
+        });
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping({"/health", "/actuator/health"})
     public ResponseEntity<?> health() {
         Map<String, Object> status = new HashMap<>();
