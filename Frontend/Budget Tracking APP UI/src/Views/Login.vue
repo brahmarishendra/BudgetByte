@@ -12,6 +12,7 @@ const {
   handleLogin,
   togglePassword,
   goToSignup,
+  forgotPassword,
 } = useLogin(emit);
 </script>
 
@@ -110,7 +111,7 @@ const {
             <input type="checkbox" v-model="rememberMe" class="custom-checkbox" />
             <span class="checkbox-text">Remember Me</span>
           </label>
-          <a href="#" @click.prevent class="forgot-link">Forgot your Password?</a>
+          <a href="/forgot-password" class="forgot-link" @click.prevent="forgotPassword">Forgot your Password?</a>
         </div>
 
         <!-- Error Alert if any -->

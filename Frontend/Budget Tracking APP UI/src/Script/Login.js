@@ -31,6 +31,18 @@ export function useLogin(emit) {
         }
     };
 
+    const forgotPassword = () => {
+        console.log('Navigating to Forgot Password page...');
+        if (emit) {
+            emit('switch-view', 'forgot-password');
+        }
+        if (router) {
+            router.push('/forgot-password');
+        }
+    };
+
+    // Function to handle login
+
     const handleLogin = async () => {
         errorMessage.value = '';
         if (!email.value || !password.value) {
@@ -76,6 +88,7 @@ export function useLogin(emit) {
             isLoading.value = false;
         }
 
+
     }
     return {
         email,
@@ -86,6 +99,7 @@ export function useLogin(emit) {
         isLoading,
         handleLogin,
         togglePassword,
+        forgotPassword,
         goToSignup
     };
 }

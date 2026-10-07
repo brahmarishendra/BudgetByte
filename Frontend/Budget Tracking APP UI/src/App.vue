@@ -81,8 +81,7 @@ html, body {
 /* Card Container */
 .auth-card {
   width: 100%;
-  background: #092014;
-  border-radius: 28px;
+  border-radius: 8px;
   overflow: hidden;
    /*box-shadow: 
     0 20px 50px -10px rgba(0, 0, 0, 0.6),

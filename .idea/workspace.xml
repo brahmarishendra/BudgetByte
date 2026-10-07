@@ -6,6 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="825fc849-92e4-485a-b4dc-346d85177784" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/BudgetByte/BudgetByte/src/main/java/Backend/BudgetByte/BudgetByte/Controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/BudgetByte/BudgetByte/src/main/java/Backend/BudgetByte/BudgetByte/Controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/BudgetByte/BudgetByte/src/main/java/Backend/BudgetByte/BudgetByte/Model/Database_Entity/Users.java" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/BudgetByte/BudgetByte/src/main/java/Backend/BudgetByte/BudgetByte/Model/Database_Entity/Users.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/BudgetByte/BudgetByte/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Backend/BudgetByte/BudgetByte/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/Budget Tracking APP UI/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/Budget Tracking APP UI/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/Budget Tracking APP UI/src/Script/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/Budget Tracking APP UI/src/Script/Login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/Budget Tracking APP UI/src/Script/Signup.js" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/Budget Tracking APP UI/src/Script/Signup.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/Budget Tracking APP UI/src/Views/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/Budget Tracking APP UI/src/Views/Login.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/Budget Tracking APP UI/src/Views/Signup.vue" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/Budget Tracking APP UI/src/Views/Signup.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Frontend/Budget Tracking APP UI/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/Frontend/Budget Tracking APP UI/src/main.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,65 +53,65 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.48314073289648" />
-      <entry key="MS500" value="2.245951469750536" />
-      <entry key="S2" value="4.98861817454493" />
-      <entry key="S5" value="11.033043707260514" />
-      <entry key="S10" value="17.56128848910909" />
-      <entry key="S30" value="25.771943621612447" />
-      <entry key="S60" value="28.655710374662892" />
-      <entry key="M2" value="30.265127574628064" />
-      <entry key="M5" value="31.2902737692969" />
-      <entry key="M10" value="31.6424443176899" />
-      <entry key="M15" value="31.761026424213497" />
-      <entry key="M30" value="31.880210448233274" />
-      <entry key="H1" value="31.940029306539348" />
-      <entry key="H2" value="31.969995645464156" />
-      <entry key="H4" value="31.98499306722397" />
-      <entry key="D1" value="31.997498183747954" />
-      <entry key="W1" value="31.999642581491734" />
+      <entry key="MS100" value="4.3929671177532815E-39" />
+      <entry key="MS500" value="2.1308557367633518E-8" />
+      <entry key="S2" value="0.01276525208586436" />
+      <entry key="S5" value="0.2465215823125372" />
+      <entry key="S10" value="0.795996070538811" />
+      <entry key="S30" value="1.8930475952693229" />
+      <entry key="S60" value="2.3777159837779855" />
+      <entry key="M2" value="2.6707445047706178" />
+      <entry key="M5" value="3.138108825007499" />
+      <entry key="M10" value="5.068283138462" />
+      <entry key="M15" value="7.876382934754347" />
+      <entry key="M30" value="18.48622890600528" />
+      <entry key="H1" value="40.588490386235364" />
+      <entry key="H2" value="69.20139677684178" />
+      <entry key="H4" value="93.74903084175736" />
+      <entry key="D1" value="122.91522748150966" />
+      <entry key="W1" value="128.95863874054598" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="0.0" />
-      <entry key="S30" value="0.0" />
-      <entry key="S60" value="0.0" />
-      <entry key="M2" value="0.0" />
-      <entry key="M5" value="0.0" />
-      <entry key="M10" value="0.0" />
-      <entry key="M15" value="0.0" />
-      <entry key="M30" value="0.0" />
-      <entry key="H1" value="0.0" />
-      <entry key="H2" value="0.0" />
-      <entry key="H4" value="0.0" />
-      <entry key="D1" value="0.0" />
-      <entry key="W1" value="0.0" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0000000000000033" />
+      <entry key="S2" value="1.000239863290503" />
+      <entry key="S5" value="1.0356439244812161" />
+      <entry key="S10" value="1.1887959864174285" />
+      <entry key="S30" value="1.5739257755386906" />
+      <entry key="S60" value="1.7733176430820974" />
+      <entry key="M2" value="1.9974627543461911" />
+      <entry key="M5" value="2.5919727684863907" />
+      <entry key="M10" value="4.2738749047170925" />
+      <entry key="M15" value="6.4063371368569895" />
+      <entry key="M30" value="12.97581282997773" />
+      <entry key="H1" value="23.4722939807285" />
+      <entry key="H2" value="34.86471262583638" />
+      <entry key="H4" value="43.74552482885138" />
+      <entry key="D1" value="53.66699105401064" />
+      <entry key="W1" value="55.65871208535086" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.315317490188943" />
-      <entry key="MS500" value="2.191403754659408" />
-      <entry key="S2" value="4.9514470031425" />
-      <entry key="S5" value="10.965270478063289" />
-      <entry key="S10" value="17.47165613408461" />
-      <entry key="S30" value="25.706925278827562" />
-      <entry key="S60" value="28.615647059776055" />
-      <entry key="M2" value="30.242844505540187" />
-      <entry key="M5" value="31.280766247994087" />
-      <entry key="M10" value="31.63758665789643" />
-      <entry key="M15" value="31.75776452295486" />
-      <entry key="M30" value="31.878567672399925" />
-      <entry key="H1" value="31.939204944475488" />
-      <entry key="H2" value="31.969582718653548" />
-      <entry key="H4" value="31.984786417093066" />
-      <entry key="D1" value="31.99746371610147" />
-      <entry key="W1" value="31.99963765690622" />
+      <entry key="MS100" value="1.7380665470198442E-35" />
+      <entry key="MS500" value="1.1169002954917003E-7" />
+      <entry key="S2" value="0.01960278725814778" />
+      <entry key="S5" value="0.34513013202175913" />
+      <entry key="S10" value="1.1864755210774287" />
+      <entry key="S30" value="3.0279764577833457" />
+      <entry key="S60" value="3.896076861470141" />
+      <entry key="M2" value="4.529011338523111" />
+      <entry key="M5" value="5.6688763335984" />
+      <entry key="M10" value="9.305665284048715" />
+      <entry key="M15" value="14.252927784908245" />
+      <entry key="M30" value="31.437657519806308" />
+      <entry key="H1" value="64.04037248962103" />
+      <entry key="H2" value="104.05129925568023" />
+      <entry key="H4" value="137.48533362644343" />
+      <entry key="D1" value="176.58034099388024" />
+      <entry key="W1" value="184.61707280986417" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6,

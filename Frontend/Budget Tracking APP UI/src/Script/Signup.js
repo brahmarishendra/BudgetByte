@@ -10,6 +10,7 @@ const email = ref('');
 const password = ref('');
 const agreeTerms = ref(false);
 const showPassword = ref(false);
+const Verified = ref(true);
 const isLoading = ref(false);
 const errorMessage = ref('');
 
@@ -24,6 +25,7 @@ const goToLogin = () => {
   }
 };
 
+
 // Password strength calculation
 const passwordStrength = computed(() => {
   const val = password.value;
@@ -32,6 +34,7 @@ const passwordStrength = computed(() => {
   if (val.length < 10) return { score: 2, text: 'Medium', color: '#f59e0b' };
   return { score: 3, text: 'Strong', color: '#10b981' };
 });
+
 
 const handleSignup = async () => {
   errorMessage.value = '';
@@ -62,6 +65,7 @@ const handleSignup = async () => {
         fullName: fullName.value,
         email: email.value,
         password: password.value,
+        Verifed: Verified.value,
       })
     });
 
@@ -89,6 +93,7 @@ return {
     fullName,
     email,
     password,
+    Verified,
     agreeTerms,
     showPassword,
     isLoading,

@@ -22,8 +22,8 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@RequestBody Map<String, String> signupRequest) {
         String email = signupRequest.get("email");
         String password = signupRequest.get("password");
-        String fullName = signupRequest.get("fullName" 
-        );
+        String fullName = signupRequest.get("fullName");
+        String Verified = signupRequest.get("Verified");
 
         if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Email and password are required.");
@@ -37,6 +37,7 @@ public class AuthController {
         user.setEmail(email);
         user.setUsername(fullName != null && !fullName.trim().isEmpty() ? fullName : email);
         user.setPassword(password);
+        user.setVerified(false);
 
         userRepository.save(user);
 
@@ -61,6 +62,7 @@ public class AuthController {
             loginResponse.put("userId", user.getId());
             loginResponse.put("email", user.getEmail());
             loginResponse.put("username", user.getUsername() != null ? user.getUsername() : user.getEmail().split("@")[0]);
+            loginResponse.put("Verified", user.getVerified(false));
             return ResponseEntity.ok(loginResponse);
         }
         return ResponseEntity.status(401).body("Invalid email or password.");
@@ -73,4 +75,26 @@ public class AuthController {
         }
         return ResponseEntity.ok("Session is active.");
     }
+
+    // Defuilt verification is false : http://localhost:8080/api/auth/Verifed
+
+    /*
+    @PostMapping("/Verifed")
+    public ResponseEntity<?> verifyUser(@RequestBody Map<String, String> verificationRequest) {
+        if (userRepository.findByEmail(verificationRequest.get("email")).isPresent()) {
+            return ResponseEntity.status(200).body("User need to verify");
+        }
+
+        Users user = userRepository.findByEmail(verificationRequest.get("email")).get();
+        user.setVerified(false);
+        return ResponseEntity.ok(user);
+    }
+    */
+
+
+
+
+
+
+
 }

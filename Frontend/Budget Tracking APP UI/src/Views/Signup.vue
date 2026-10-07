@@ -15,7 +15,7 @@ const {
     goToLogin,
     handleSignup,
     data
-} = useSignup(emit);
+} = useSignup();
 </script>
 
 <template>
@@ -176,12 +176,13 @@ const {
 /* Brand Header */
 .brand-header {
   padding: 32px 24px 26px;
+  border-radius: 1px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: radial-gradient(circle at 50% 20%, rgba(34, 197, 94, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle at 50% 20%, rgba(0, 0, 0, 0.973) 0%);
 }
 
 .logo-wrapper {
@@ -211,8 +212,6 @@ const {
 .form-sheet {
   flex: 1;
   background: #ffffff;
-  border-top-left-radius: 36px;
-  border-top-right-radius: 36px;
   padding: 24px 24px 20px;
   display: flex;
   flex-direction: column;

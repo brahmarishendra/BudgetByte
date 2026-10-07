@@ -4,12 +4,14 @@ import App from './App.vue';
 import Login from './Views/Login.vue';
 import Signup from './Views/Signup.vue';
 import Home from './Views/Home.vue';
+import forgotPassword from '@/Views/forgot-password.vue';
 
 const routes = [
     { path: '/', redirect: '/login' },
     { path: '/login', component: Login },
     { path: '/signup', component: Signup },
     { path: '/home', component: Home },
+    { path: '/forgot-password', component: forgotPassword },
 ];
 
 const router = createRouter({
