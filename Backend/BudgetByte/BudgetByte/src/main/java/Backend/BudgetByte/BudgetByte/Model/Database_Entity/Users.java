@@ -22,7 +22,7 @@ public class Users {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(name = "\"Verified\"", nullable = false)
     private boolean Verified;
 
     public Users() {
@@ -68,7 +68,13 @@ public class Users {
         this.password = password;
     }
 
-    public boolean getVerified(boolean verified) {return verified;}
-    public void setVerified(boolean verified) { this.Verified = Verified;}
+        public boolean getVerified() {
+        return Verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.Verified = verified;
+    }
+
 
 }

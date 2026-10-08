@@ -62,7 +62,7 @@ public class AuthController {
             loginResponse.put("userId", user.getId());
             loginResponse.put("email", user.getEmail());
             loginResponse.put("username", user.getUsername() != null ? user.getUsername() : user.getEmail().split("@")[0]);
-            loginResponse.put("Verified", user.getVerified(false));
+            loginResponse.put("Verified", user.getVerified());
             return ResponseEntity.ok(loginResponse);
         }
         return ResponseEntity.status(401).body("Invalid email or password.");
