@@ -35,7 +35,7 @@ services:
     port: 8080
     envVars:
       - key: SPRING_DATASOURCE_URL
-        value: postgresql://budgetuser:${POSTGRES_PASSWORD}@budgetbyte-db:5432/budgetbyte
+        value: jdbc:postgresql://budgetbyte-db:5432/budgetbyte
       - key: SPRING_DATASOURCE_USERNAME
         value: budgetuser
       - key: SPRING_DATASOURCE_PASSWORD

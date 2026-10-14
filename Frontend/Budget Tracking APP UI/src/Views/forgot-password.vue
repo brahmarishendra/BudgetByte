@@ -6,81 +6,20 @@ import { apiUrl } from '@/config/api';
 
 const router = useRouter();
 
-// State
-const step = ref(1); // 1 = Enter Email, 2 = Verify Code & New Password, 3 = Success
+const step = ref(1);
 const email = ref('');
-const verificationCode = ref('');
+const currentPassword = ref('');
 const newPassword = ref('');
 const confirmPassword = ref('');
 const showPassword = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref('');
-const successMessage = ref('');
-const countdown = ref(0);
 
-let timerInterval = null;
-
-const startCountdown = (seconds = 60) => {
-  countdown.value = seconds;
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(() => {
-    if (countdown.value > 0) {
-      countdown.value--;
-    } else {
-      clearInterval(timerInterval);
-    }
-  }, 1000);
-};
-
-// Step 1: Request Verification Code
-const handleSendCode = async () => {
-  errorMessage.value = '';
-  if (!email.value || !email.value.includes('@')) {
-    errorMessage.value = 'Please enter a valid email address.';
-    return;
-  }
-
-  isLoading.value = true;
-  try {
-    const response = await fetch(apiUrl('/api/auth/send-verification'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value }),
-    });
-
-    if (!response.ok) {
-      const err = await response.text();
-      throw new Error(err || 'Failed to send verification code.');
-    }
-
-    const data = await response.json();
-    if (data.code) {
-      console.log('Verification code generated:', data.code);
-      // Auto-fill or provide a hint in development/testing mode
-      successMessage.value = `Verification code sent to ${email.value}! (Code: ${data.code})`;
-    } else {
-      successMessage.value = `Verification code sent to ${email.value}!`;
-    }
-
-    step.value = 2;
-    startCountdown(60);
-  } catch (err) {
-    // If backend is unreachable or local mock fallback, allow user to test code seamlessly
-    console.warn('Backend verification call failed, enabling offline test mode:', err.message);
-    successMessage.value = `Verification code sent to ${email.value}! (Use code: 123456)`;
-    step.value = 2;
-    startCountdown(60);
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-// Step 2: Verify Code and Reset Password
 const handleResetPassword = async () => {
   errorMessage.value = '';
 
-  if (!verificationCode.value || verificationCode.value.trim().length < 4) {
-    errorMessage.value = 'Please enter the verification code sent to your email.';
+  if (!email.value.trim() || !currentPassword.value) {
+    errorMessage.value = 'Email and current password are required.';
     return;
   }
 
@@ -100,8 +39,8 @@ const handleResetPassword = async () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        email: email.value,
-        code: verificationCode.value,
+        email: email.value.trim(),
+        currentPassword: currentPassword.value,
         newPassword: newPassword.value,
       }),
     });
@@ -113,12 +52,7 @@ const handleResetPassword = async () => {
 
     step.value = 3;
   } catch (err) {
-    // Allow local mock fallback if testing offline
-    if (verificationCode.value === '123456' || verificationCode.value.length === 6) {
-      step.value = 3;
-    } else {
-      errorMessage.value = err.message || 'Failed to reset password. Please check your code.';
-    }
+    errorMessage.value = err.message || 'Failed to update password.';
   } finally {
     isLoading.value = false;
   }
@@ -138,22 +72,17 @@ const goToLogin = () => {
     <div class="auth-card-bottom">
       <!-- Title & Subtitle matching image layout -->
       <div class="card-header">
-        <h2 class="card-title">Reset password</h2>
+        <h2 class="card-title">Set new password</h2>
         <p class="card-subtitle">
-          Verify your email to securely reset your BudgetByte account password.
+          Enter your current password, then choose a new password for your BudgetByte account.
         </p>
       </div>
 
-      <!-- Error / Success Alert -->
       <div v-if="errorMessage" class="alert-box alert-error">
         {{ errorMessage }}
       </div>
-      <div v-if="successMessage && step === 2" class="alert-box alert-success">
-        {{ successMessage }}
-      </div>
 
-      <!-- STEP 1: Enter Email -->
-      <form v-if="step === 1" @submit.prevent="handleSendCode" class="auth-form">
+      <form v-if="step === 1" @submit.prevent="handleResetPassword" class="auth-form">
         <div class="input-group">
           <label for="reset-email" class="input-label">Email Address<span class="required">*</span></label>
           <div class="input-wrapper">
@@ -169,50 +98,23 @@ const goToLogin = () => {
           </div>
         </div>
 
-        <button type="submit" class="primary-btn" :disabled="isLoading">
-          <span v-if="!isLoading">Send Verification Code</span>
-          <span v-else class="btn-spinner"></span>
-        </button>
-
-        <div class="form-footer">
-          <button type="button" class="link-btn" @click="goToLogin">
-            ← Back to Login
-          </button>
-        </div>
-      </form>
-
-      <!-- STEP 2: Verification Code + New Password -->
-      <form v-else-if="step === 2" @submit.prevent="handleResetPassword" class="auth-form">
-        <!-- Verification Code -->
         <div class="input-group">
-          <div class="label-row">
-            <label for="code-input" class="input-label">6-Digit Verification Code<span class="required">*</span></label>
-            <button 
-              type="button" 
-              class="resend-btn" 
-              :disabled="countdown > 0" 
-              @click="handleSendCode"
-            >
-              {{ countdown > 0 ? `Resend in ${countdown}s` : 'Resend Code' }}
-            </button>
-          </div>
+          <label for="current-pass" class="input-label">Current Password<span class="required">*</span></label>
           <div class="input-wrapper">
             <input
-              id="code-input"
-              type="text"
-              maxlength="6"
-              v-model="verificationCode"
-              placeholder="e.g. 482910"
-              autocomplete="one-time-code"
+              id="current-pass"
+              :type="showPassword ? 'text' : 'password'"
+              v-model="currentPassword"
+              placeholder="Enter current password"
+              autocomplete="current-password"
               required
-              class="form-input code-input"
+              class="form-input"
             />
           </div>
         </div>
 
-        <!-- New Password -->
         <div class="input-group">
-          <label for="new-pass" class="input-label">New Password<span class="required">*</span></label>
+          <label for="new-pass" class="input-label">Set New Password<span class="required">*</span></label>
           <div class="input-wrapper">
             <input
               id="new-pass"
@@ -241,9 +143,8 @@ const goToLogin = () => {
           </div>
         </div>
 
-        <!-- Confirm Password -->
         <div class="input-group">
-          <label for="confirm-pass" class="input-label">Confirm Password<span class="required">*</span></label>
+          <label for="confirm-pass" class="input-label">Confirm New Password<span class="required">*</span></label>
           <div class="input-wrapper">
             <input
               id="confirm-pass"
@@ -256,20 +157,19 @@ const goToLogin = () => {
             />
           </div>
         </div>
-
         <button type="submit" class="primary-btn" :disabled="isLoading">
-          <span v-if="!isLoading">Verify & Reset Password</span>
+        <button type="submit" class="primary-btn" :disabled="isLoading">
           <span v-else class="btn-spinner"></span>
         </button>
-
+        </button>
         <div class="form-footer">
-          <button type="button" class="link-btn" @click="step = 1">
-            ← Change Email
+        <div class="form-footer">
+          <button type="button" class="link-btn" @click="goToLogin">
           </button>
         </div>
       </form>
+      </form>
 
-      <!-- STEP 3: Success Screen -->
       <div v-else-if="step === 3" class="success-screen">
         <div class="success-icon-badge">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#84cc16" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -277,9 +177,9 @@ const goToLogin = () => {
             <polyline points="22 4 12 14.01 9 11.01"></polyline>
           </svg>
         </div>
-        <h3 class="success-title">Password Reset Complete!</h3>
+        <h3 class="success-title">Password Updated!</h3>
         <p class="success-desc">
-          Your password has been securely updated and your email is verified. You can now log in to BudgetByte.
+          Your password has been changed. You can now log in with your new password.
         </p>
         <button type="button" class="primary-btn" @click="goToLogin">
           Proceed to Login
@@ -366,12 +266,6 @@ const goToLogin = () => {
   gap: 6px;
 }
 
-.label-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .input-label {
   font-size: 12.5px;
   font-weight: 600;
@@ -381,21 +275,6 @@ const goToLogin = () => {
 .required {
   color: #84cc16;
   margin-left: 2px;
-}
-
-.resend-btn {
-  background: transparent;
-  border: none;
-  color: #a3e635;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
-}
-
-.resend-btn:disabled {
-  color: #64748b;
-  cursor: not-allowed;
 }
 
 .input-wrapper {
@@ -427,13 +306,6 @@ const goToLogin = () => {
   border-color: #f2f2f2;
   background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 0 2px rgba(132, 204, 22, 0.25);
-}
-
-.code-input {
-  font-family: monospace;
-  font-size: 17px;
-  letter-spacing: 4px;
-  font-weight: 700;
 }
 
 .eye-toggle-btn {

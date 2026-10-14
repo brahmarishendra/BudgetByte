@@ -66,10 +66,14 @@ public class AuthController {
     // 2. Login API: POST http://localhost:8080/api/auth/login
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginRequest) {
+        if (loginRequest == null) {
+            return ResponseEntity.badRequest().body("Email and password are required.");
+        }
+
         String email = loginRequest.get("email");
         String password = loginRequest.get("password");
 
-        if (email == null || password == null) {
+        if (email == null || email.isBlank() || password == null || password.isBlank()) {
             return ResponseEntity.badRequest().body("Email and password are required.");
         }
 
@@ -80,7 +84,7 @@ public class AuthController {
             String hashedInput = hashPassword(password);
 
             // Matches either hashed password or legacy plain text (backward compatibility)
-            if (storedPassword.equals(hashedInput) || storedPassword.equals(password)) {
+            if (storedPassword != null && (storedPassword.equals(hashedInput) || storedPassword.equals(password))) {
                 // Auto-upgrade legacy plain-text password to hash in DB
                 if (storedPassword.equals(password)) {
                     user.setPassword(hashedInput);
@@ -92,7 +96,6 @@ public class AuthController {
                 loginResponse.put("userId", user.getId());
                 loginResponse.put("email", user.getEmail());
                 loginResponse.put("username", user.getUsername() != null ? user.getUsername() : user.getEmail().split("@")[0]);
-                loginResponse.put("Verified", user.getVerified());
                 return ResponseEntity.ok(loginResponse);
             }
         }
@@ -110,11 +113,17 @@ public class AuthController {
     // 3. Forgot Password / Reset Password API
     @PostMapping("/forgot-password")
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        if (request == null) {
+            return ResponseEntity.badRequest().body("Email and passwords are required.");
+        }
+
         String email = request.get("email");
+        String currentPassword = request.get("currentPassword");
         String newPassword = request.get("newPassword");
 
-        if (email == null || email.trim().isEmpty() || newPassword == null || newPassword.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Email and new password are required.");
+        if (email == null || email.isBlank() || currentPassword == null || currentPassword.isBlank()
+                || newPassword == null || newPassword.isBlank()) {
+            return ResponseEntity.badRequest().body("Email, current password, and new password are required.");
         }
 
         if (newPassword.length() < 8) {
@@ -124,12 +133,18 @@ public class AuthController {
         Optional<Users> userOpt = userRepository.findByEmail(email);
         if (userOpt.isPresent()) {
             Users user = userOpt.get();
+            String storedPassword = user.getPassword();
+            if (storedPassword == null
+                    || (!storedPassword.equals(hashPassword(currentPassword)) && !storedPassword.equals(currentPassword))) {
+                return ResponseEntity.status(401).body("Invalid email or current password.");
+            }
+
             user.setPassword(hashPassword(newPassword));
             userRepository.save(user);
-            return ResponseEntity.ok("Password reset successfully!");
+            return ResponseEntity.ok("Password updated successfully.");
         }
 
-        return ResponseEntity.status(404).body("No account found with this email address.");
+        return ResponseEntity.status(401).body("Invalid email or current password.");
     }
 
 

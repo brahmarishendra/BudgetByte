@@ -32,7 +32,7 @@
 7. **Port:** `8080`
 8. **Environment Variables:**
    ```
-   SPRING_DATASOURCE_URL=postgresql://[user]:[REDACTED]@[host]:[port]/budgetbyte
+   SPRING_DATASOURCE_URL=jdbc:postgresql://[host]:[port]/budgetbyte
    SPRING_DATASOURCE_USERNAME=budgetuser
    SPRING_DATASOURCE_PASSWORD=[your_password]
    SPRING_JPA_HIBERNATE_DDL_AUTO=update
