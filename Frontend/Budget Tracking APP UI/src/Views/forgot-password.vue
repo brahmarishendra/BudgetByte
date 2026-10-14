@@ -158,16 +158,15 @@ const goToLogin = () => {
           </div>
         </div>
         <button type="submit" class="primary-btn" :disabled="isLoading">
-        <button type="submit" class="primary-btn" :disabled="isLoading">
+          <span v-if="!isLoading">Update Password</span>
           <span v-else class="btn-spinner"></span>
         </button>
-        </button>
-        <div class="form-footer">
+
         <div class="form-footer">
           <button type="button" class="link-btn" @click="goToLogin">
+            ← Back to Login
           </button>
         </div>
-      </form>
       </form>
 
       <div v-else-if="step === 3" class="success-screen">
