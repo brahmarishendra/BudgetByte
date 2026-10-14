@@ -48,7 +48,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ffff;
+  background: #edf3e4;
   position: relative;
   overflow-x: hidden;
   padding: 32px 16px;
@@ -78,16 +78,12 @@ html, body {
   justify-content: center;
 }
 
-/* Card Container */
+/* Card Container with 6px border radius */
 .auth-card {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
-   /*box-shadow: 
-    0 20px 50px -10px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 0 35px rgba(16, 185, 129, 0.12);
-  */
+  box-shadow: 0 16px 40px -10px rgba(20, 38, 11, 0.18);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -121,12 +117,12 @@ html, body {
 
 @media (max-width: 480px) {
   .auth-page {
-    padding: 12px 0px;
+    padding: 12px 8px;
     align-items: flex-start;
   }
   
   .auth-card {
-    border-radius: 24px;
+    border-radius: 6px;
   }
 }
 </style>

@@ -1,92 +1,134 @@
 <script setup>
 import { useSignup } from '@/Script/Signup';
+import AuthIllustration from './AuthIllustration.vue';
 
-const s = defineEmits(['switch-view', 'signup-success']);
+const emit = defineEmits(['switch-view', 'signup-success']);
 const {
-    fullName,
-    email,
-    password,
-    agreeTerms,
-    showPassword,
-    isLoading,
-    errorMessage,
-    passwordStrength,
-    togglePassword,
-    goToLogin,
-    handleSignup,
-    data
-} = useSignup();
+  fullName,
+  email,
+  password,
+  agreeTerms,
+  showPassword,
+  isEmailVerified,
+  isVerifyingEmail,
+  verificationCode,
+  countdown,
+  isLoading,
+  errorMessage,
+  infoMessage,
+  passwordStrength,
+  togglePassword,
+  sendVerificationCode,
+  verifyEmailCode,
+  goToLogin,
+  handleSignup
+} = useSignup(emit);
 </script>
 
 <template>
-  <div class="signup-container">
-    <!-- Header Section with Dark Green Gradient -->
-    <div class="brand-header">
-      <div class="logo-wrapper">
-        <h1 class="logo-title">Sendme.</h1>
-        <span class="logo-subtitle">by mailbox</span>
-      </div>
-    </div>
+  <div class="auth-card-container">
+    <!-- Top Half: Coins & Savings Vault Vector Artwork -->
+    <AuthIllustration variant="coins" />
 
-    <!-- White Card Sheet with Curved Top -->
-    <div class="form-sheet">
-      <!-- Illustration -->
-      <div class="illustration-container">
-        <div class="illustration-badge">
-          <svg width="68" height="64" viewBox="0 0 68 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Shield / User Badge with checkmark -->
-            <rect x="16" y="10" width="36" height="36" rx="10" stroke="#10b981" stroke-width="2.2" fill="#ecfdf5"/>
-            <!-- Plus / Add User badge -->
-            <circle cx="34" cy="24" r="7" stroke="#047857" stroke-width="2" fill="#d1fae5"/>
-            <path d="M34 21V27M31 24H37" stroke="#047857" stroke-width="2" stroke-linecap="round"/>
-            <path d="M22 39C22 34.5 27 34 34 34C41 34 46 34.5 46 39" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
-            
-            <!-- Checkmark Icon -->
-            <circle cx="46" cy="14" r="6" fill="#10b981"/>
-            <path d="M43.5 14L45.5 16L49 12.5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            
-            <!-- Sparkles -->
-            <path d="M8 14L11 11" stroke="#34d399" stroke-width="2" stroke-linecap="round"/>
-            <path d="M57 28L60 25" stroke="#34d399" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
+    <!-- Bottom Half: Dark Olive Card (6px border radius) -->
+    <div class="auth-card-bottom">
+      <!-- Title & Subtitle -->
+      <div class="card-header">
+        <h2 class="card-title">Create your account</h2>
+        <p class="card-subtitle">
+          Start tracking your income, expenses, and monthly budget with BudgetByte.
+        </p>
       </div>
 
-      <!-- Main Titles -->
-      <div class="header-text">
-        <h2 class="title">Create your Account</h2>
-        <p class="subtitle">Join Sendme today to manage your mail, calendar, and files in one place.</p>
+      <!-- Alerts -->
+      <div v-if="errorMessage" class="alert-box alert-error">
+        {{ errorMessage }}
+      </div>
+      <div v-if="infoMessage" class="alert-box alert-info">
+        {{ infoMessage }}
       </div>
 
       <!-- Form -->
-      <form @submit.prevent="handleSignup" class="signup-form">
-        <!-- Full Name Field -->
+      <form @submit.prevent="handleSignup" class="auth-form">
+        <!-- Full Name -->
         <div class="input-group">
           <label for="fullname" class="input-label">Full Name<span class="required">*</span></label>
           <div class="input-wrapper">
-            <input 
-              id="fullname" 
-              type="text" 
-              v-model="fullName" 
-              placeholder="John Lennon" 
+            <input
+              id="fullname"
+              type="text"
+              v-model="fullName"
+              placeholder="e.g. Alex Morgan"
+              autocomplete="name"
               required
               class="form-input"
             />
           </div>
         </div>
 
-        <!-- Email Field -->
+        <!-- Email Address with Verification Action -->
         <div class="input-group">
-          <label for="signup-email" class="input-label">Email Address<span class="required">*</span></label>
+          <div class="label-row">
+            <label for="signup-email" class="input-label">Email Address<span class="required">*</span></label>
+            <span v-if="isEmailVerified" class="badge-verified">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Verified
+            </span>
+            <button
+              v-else
+              type="button"
+              class="verify-trigger-btn"
+              @click="sendVerificationCode"
+              :disabled="!email || isLoading"
+            >
+              Verify Email
+            </button>
+          </div>
           <div class="input-wrapper">
-            <input 
-              id="signup-email" 
-              type="email" 
-              v-model="email" 
-              placeholder="johnlennon@Sendme.com" 
+            <input
+              id="signup-email"
+              type="email"
+              v-model="email"
+              placeholder="alex@example.com"
+              autocomplete="email"
               required
               class="form-input"
             />
+          </div>
+        </div>
+
+        <!-- Verification Code Row (If verifying email) -->
+        <div v-if="isVerifyingEmail && !isEmailVerified" class="verification-step-box">
+          <div class="label-row">
+            <span class="sub-label">Enter 6-digit code sent to your email:</span>
+            <button
+              type="button"
+              class="resend-btn"
+              :disabled="countdown > 0"
+              @click="sendVerificationCode"
+            >
+              {{ countdown > 0 ? `${countdown}s` : 'Resend' }}
+            </button>
+          </div>
+          <div class="otp-row">
+            <input
+              type="text"
+              maxlength="6"
+              v-model="verificationCode"
+              placeholder="123456"
+              autocomplete="one-time-code"
+              class="form-input code-input"
+            />
+            <button
+              type="button"
+              class="code-verify-btn"
+              @click="verifyEmailCode"
+              :disabled="isLoading || !verificationCode"
+            >
+              Confirm
+            </button>
           </div>
         </div>
 
@@ -94,185 +136,143 @@ const {
         <div class="input-group">
           <label for="signup-password" class="input-label">Password<span class="required">*</span></label>
           <div class="input-wrapper">
-            <input 
-              id="signup-password" 
-              :type="showPassword ? 'text' : 'password'" 
-              v-model="password" 
-              placeholder="At least 8 characters" 
+            <input
+              id="signup-password"
+              :type="showPassword ? 'text' : 'password'"
+              v-model="password"
+              placeholder="At least 8 characters"
+              autocomplete="new-password"
               required
               class="form-input password-input"
             />
-            <button type="button" class="eye-toggle" @click="togglePassword" aria-label="Toggle password visibility">
-              <svg v-if="!showPassword" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <button
+              type="button"
+              class="eye-toggle-btn"
+              @click="togglePassword"
+              aria-label="Toggle password visibility"
+            >
+              <svg v-if="!showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
-              <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <svg v-else width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
                 <line x1="1" y1="1" x2="23" y2="23"></line>
               </svg>
             </button>
           </div>
-          <!-- Strength Meter Bar -->
-          <div class="strength-meter" v-if="password">
-            <div class="meter-bars">
-              <div class="bar" :style="{ background: passwordStrength.score >= 1 ? passwordStrength.color : '#e2e8f0' }"></div>
-              <div class="bar" :style="{ background: passwordStrength.score >= 2 ? passwordStrength.color : '#e2e8f0' }"></div>
-              <div class="bar" :style="{ background: passwordStrength.score >= 3 ? passwordStrength.color : '#e2e8f0' }"></div>
+          <!-- Password Strength Indicator -->
+          <div v-if="password" class="strength-bar-container">
+            <div class="strength-bar">
+              <div
+                class="strength-fill"
+                :style="{
+                  width: passwordStrength.score === 1 ? '33%' : passwordStrength.score === 2 ? '66%' : '100%',
+                  backgroundColor: passwordStrength.color
+                }"
+              ></div>
             </div>
-            <span class="strength-text" :style="{ color: passwordStrength.color }">{{ passwordStrength.text }}</span>
+            <span class="strength-text" :style="{ color: passwordStrength.color }">
+              {{ passwordStrength.text }}
+            </span>
           </div>
         </div>
 
-        <!-- Terms Agreement Row -->
-        <div class="controls-row">
-          <label class="remember-label">
-            <input type="checkbox" v-model="agreeTerms" class="custom-checkbox" />
-            <span class="checkbox-text">I agree to Terms, Privacy & Security</span>
+        <!-- Terms Agreement -->
+        <div class="terms-row">
+          <label class="terms-label">
+            <input type="checkbox" v-model="agreeTerms" required class="custom-checkbox" />
+            <span class="terms-text">I agree to the Terms of Service & Privacy Policy</span>
           </label>
         </div>
 
-        <!-- Error Banner -->
-        <div v-if="errorMessage" class="error-banner">
-          {{ errorMessage }}
-        </div>
-
-        <!-- Sign Up Action Button -->
-        <button type="submit" class="submit-btn" :disabled="isLoading">
+        <!-- Submit Button (6px border radius) -->
+        <button type="submit" class="primary-btn" :disabled="isLoading">
           <span v-if="!isLoading">Create Account</span>
-          <span v-else class="loading-spinner"></span>
+          <span v-else class="btn-spinner"></span>
         </button>
 
-        <!-- Log In Switcher -->
-        <div class="switch-view-container">
+        <!-- Switch to Login -->
+        <div class="switch-container">
           <span class="switch-text">Already have an account?</span>
           <button type="button" class="switch-btn" @click="goToLogin">
             Log In
           </button>
         </div>
       </form>
-
-      <!-- Footer Links -->
-      <footer class="sheet-footer">
-        <p>© 2025 Sendme. • Privacy • Security • Terms</p>
-      </footer>
     </div>
   </div>
 </template>
 
 <style scoped>
-.signup-container {
-  display: flex;
-  flex-direction: column;
+/* Card Container with 6px border radius */
+.auth-card-container {
   width: 100%;
-  min-height: 100%;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.16) 0%, rgba(5, 150, 105, 0.04) 50%, transparent 70%);
-  color: #1e293b;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  border-radius: 6px;
   overflow: hidden;
-  box-sizing: border-box;
-}
-
-/* Brand Header */
-.brand-header {
-  padding: 32px 24px 26px;
-  border-radius: 1px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.22);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: radial-gradient(circle at 50% 20%, rgba(0, 0, 0, 0.973) 0%);
+  background: #142714;
 }
 
-.logo-wrapper {
+/* Bottom Half Dark Olive Card */
+.auth-card-bottom {
+  background: #152814;
+  padding: 24px 24px 22px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  color: #f8fafc;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
 }
 
-.logo-title {
+.card-header {
+  margin-bottom: 18px;
+}
+
+.card-title {
   color: #ffffff;
-  font-size: 32px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  margin: 0;
-  line-height: 1.1;
-}
-
-.logo-subtitle {
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 13px;
-  font-weight: 500;
-  margin-top: 2px;
-  letter-spacing: 0.2px;
-}
-
-/* White Form Sheet */
-.form-sheet {
-  flex: 1;
-  background: #ffffff;
-  padding: 24px 24px 20px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0.9;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Illustration */
-.illustration-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 8px;
-}
-
-.illustration-badge {
-  width: 68px;
-  height: 68px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Header Text */
-.header-text {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.title {
-  font-size: 24px;
-  font-weight: 800;
-  color: #0f172a;
-  margin: 0 0 6px 0;
+  font-size: 23px;
+  font-weight: 700;
   letter-spacing: -0.4px;
+  margin: 0 0 6px;
+  line-height: 1.2;
 }
 
-.subtitle {
-  font-size: 13px;
-  color: #64748b;
-  margin: 0;
+.card-subtitle {
+  color: #a3b899;
+  font-size: 13.5px;
   line-height: 1.45;
-  padding: 0 4px;
+  margin: 0;
 }
 
-/* Form Styling */
-.signup-form {
+/* Alert Boxes with 6px border radius */
+.alert-box {
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.alert-error {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+.alert-info {
+  background: rgba(132, 204, 22, 0.16);
+  border: 1px solid rgba(132, 204, 22, 0.35);
+  color: #bef264;
+}
+
+/* Form Styles */
+.auth-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  width: 100%;
+  gap: 14px;
 }
 
 .input-group {
@@ -281,15 +281,63 @@ const {
   gap: 5px;
 }
 
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .input-label {
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
-  color: #334155;
+  color: #cbd5e1;
+}
+
+.sub-label {
+  font-size: 11.5px;
+  color: #a3b899;
 }
 
 .required {
-  color: #ef4444;
+  color: #84cc16;
   margin-left: 2px;
+}
+
+.verify-trigger-btn {
+  background: transparent;
+  border: none;
+  color: #a3e635;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.verify-trigger-btn:hover {
+  text-decoration: underline;
+}
+
+.badge-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #84cc16;
+}
+
+.resend-btn {
+  background: transparent;
+  border: none;
+  color: #a3e635;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.resend-btn:disabled {
+  color: #64748b;
+  cursor: not-allowed;
 }
 
 .input-wrapper {
@@ -298,90 +346,128 @@ const {
   align-items: center;
 }
 
+/* Inputs with 6px border radius */
 .form-input {
   width: 100%;
-  height: 46px;
-  padding: 0 16px;
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 2px;
+  padding: 0 14px;
   font-size: 14px;
-  color: #0f172a;
-  font-family: inherit;
+  color: #ffffff;
+  outline: none;
   transition: all 0.2s ease;
   box-sizing: border-box;
 }
 
+.password-input {
+  padding-right: 42px;
+}
+
 .form-input::placeholder {
-  color: #94a3b8;
-  font-weight: 400;
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .form-input:focus {
-  outline: none;
-  border-color: #10b981;
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
+  border-color: #fcfff8;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 2px rgba(132, 204, 22, 0.25);
 }
 
-.password-input {
-  padding-right: 48px;
-}
-
-.eye-toggle {
+.eye-toggle-btn {
   position: absolute;
-  right: 14px;
+  right: 12px;
   background: transparent;
   border: none;
-  color: #64748b;
+  color: #94a3b8;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 4px;
-  border-radius: 6px;
-  transition: color 0.2s;
-}
-
-.eye-toggle:hover {
-  color: #0f172a;
-}
-
-/* Strength Meter */
-.strength-meter {
   display: flex;
   align-items: center;
-  gap: 10px;
+}
+
+.eye-toggle-btn:hover {
+  color: #84cc16;
+}
+
+/* OTP Code Box */
+.verification-step-box {
+  background: rgba(132, 204, 22, 0.08);
+  border: 1px dashed rgba(132, 204, 22, 0.3);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.otp-row {
+  display: flex;
+  gap: 8px;
+}
+
+.code-input {
+  flex: 1;
+  font-family: monospace;
+  font-size: 15px;
+  letter-spacing: 3px;
+  font-weight: 700;
+  height: 38px;
+}
+
+.code-verify-btn {
+  background: #84cc16;
+  color: #143209;
+  border: none;
+  border-radius: 6px;
+  padding: 0 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  height: 38px;
+  transition: background 0.15s ease;
+}
+
+.code-verify-btn:hover:not(:disabled) {
+  background: #a3e635;
+}
+
+/* Password strength */
+.strength-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-top: 4px;
 }
 
-.meter-bars {
-  display: flex;
-  gap: 4px;
+.strength-bar {
   flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
 }
 
-.bar {
-  height: 4px;
-  flex: 1;
-  border-radius: 2px;
-  transition: background 0.3s;
+.strength-fill {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
 }
 
 .strength-text {
   font-size: 11px;
-  font-weight: 700;
-  min-width: 48px;
-  text-align: right;
+  font-weight: 600;
 }
 
-/* Controls Row */
-.controls-row {
+/* Terms Row */
+.terms-row {
   display: flex;
-  align-items: center;
-  margin-top: 2px;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
 }
 
-.remember-label {
+.terms-label {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -390,93 +476,51 @@ const {
 }
 
 .custom-checkbox {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 5px;
-  outline: none;
+  accent-color: #84cc16;
+  width: 15px;
+  height: 15px;
   cursor: pointer;
-  position: relative;
-  transition: all 0.2s ease;
-  margin: 0;
-  background: #ffffff;
 }
 
-.custom-checkbox:checked {
-  background-color: #10b981;
-  border-color: #10b981;
+.terms-text {
+  color: #cbd5e1;
 }
 
-.custom-checkbox:checked::after {
-  content: '';
-  position: absolute;
-  left: 5px;
-  top: 2px;
-  width: 5px;
-  height: 9px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-}
-
-.checkbox-text {
-  font-size: 13px;
-  color: #334155;
-  font-weight: 600;
-}
-
-.error-banner {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
-  font-size: 13px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-weight: 500;
-}
-
-/* Submit Button */
-.submit-btn {
-  margin-top: 4px;
-  height: 50px;
+/* Primary Button with 6px border radius */
+.primary-btn {
   width: 100%;
-  background: #090d16;
-  color: #ffffff;
+  height: 45px;
+  background: #84cc16;
+  color: #143209;
   border: none;
-  border-radius: 9999px;
-  font-size: 15px;
+  border-radius: 23px;
+  font-size: 14px;
   font-weight: 700;
-  font-family: inherit;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 4px;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(9, 13, 22, 0.25);
 }
 
-.submit-btn:hover {
-  background: #1e293b;
+.primary-btn:hover:not(:disabled) {
+  background: #a3e635;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(9, 13, 22, 0.35);
+  box-shadow: 0 4px 14px rgba(132, 204, 22, 0.35);
 }
 
-.submit-btn:active {
-  transform: translateY(0);
-}
-
-.submit-btn:disabled {
-  opacity: 0.7;
+.primary-btn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-.loading-spinner {
+.btn-spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2.5px solid rgba(20, 50, 9, 0.2);
+  border-top-color: #143209;
   border-radius: 50%;
-  border-top-color: #ffffff;
   animation: spin 0.8s linear infinite;
 }
 
@@ -484,48 +528,32 @@ const {
   to { transform: rotate(360deg); }
 }
 
-/* Switcher container */
-.switch-view-container {
+/* Switch Container */
+.switch-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   margin-top: 8px;
+  font-size: 13px;
 }
 
 .switch-text {
-  font-size: 13px;
-  color: #64748b;
-  font-weight: 500;
+  color: #94a3b8;
 }
 
 .switch-btn {
-  background: none;
+  background: transparent;
   border: none;
-  padding: 0;
+  color: #84cc16;
   font-size: 13px;
   font-weight: 700;
-  color: #059669;
   cursor: pointer;
-  font-family: inherit;
+  padding: 0;
 }
 
 .switch-btn:hover {
-  color: #047857;
+  color: #a3e635;
   text-decoration: underline;
-}
-
-/* Sheet Footer */
-.sheet-footer {
-  margin-top: auto;
-  padding-top: 20px;
-  text-align: center;
-}
-
-.sheet-footer p {
-  font-size: 12px;
-  color: #94a3b8;
-  margin: 0;
-  font-weight: 500;
 }
 </style>

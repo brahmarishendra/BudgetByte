@@ -12,6 +12,9 @@ export default defineConfig({
     port: 4173,
     strictPort: true,
     cors: true,
+    hmr: {
+      clientPort: 4173,
+    },
     proxy: {
       '/api': {
         target: 'http://127.0.0.1:8080',
