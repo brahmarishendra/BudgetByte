@@ -44,7 +44,6 @@ public class AuthController {
         String email = signupRequest.get("email");
         String password = signupRequest.get("password");
         String fullName = signupRequest.get("fullName");
-        String verifiedStr = signupRequest.get("Verified");
 
         if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Email and password are required.");
@@ -58,7 +57,6 @@ public class AuthController {
         user.setEmail(email);
         user.setUsername(fullName != null && !fullName.trim().isEmpty() ? fullName : email);
         user.setPassword(hashPassword(password)); // Store hashed password
-        user.setVerified("true".equalsIgnoreCase(verifiedStr));
 
         userRepository.save(user);
 
@@ -109,42 +107,7 @@ public class AuthController {
         return ResponseEntity.ok("Session is active.");
     }
 
-    // 3. Send Verification Code API
-    @PostMapping("/send-verification")
-    public ResponseEntity<?> sendVerificationCode(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        if (email == null || email.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Email is required.");
-        }
-
-        // Generate a 6-digit verification code
-        int code = 100000 + (int)(Math.random() * 900000);
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Verification code sent to " + email);
-        response.put("code", String.valueOf(code));
-        return ResponseEntity.ok(response);
-    }
-
-    // 4. Verify Email API
-    @PostMapping("/verify")
-    public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        if (email == null || email.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Email is required.");
-        }
-
-        Optional<Users> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isPresent()) {
-            Users user = userOpt.get();
-            user.setVerified(true);
-            userRepository.save(user);
-            return ResponseEntity.ok("Email verified successfully!");
-        }
-
-        return ResponseEntity.ok("Email verified successfully!");
-    }
-
-    // 5. Forgot Password / Reset Password API
+    // 3. Forgot Password / Reset Password API
     @PostMapping("/forgot-password")
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
         String email = request.get("email");
@@ -162,7 +125,6 @@ public class AuthController {
         if (userOpt.isPresent()) {
             Users user = userOpt.get();
             user.setPassword(hashPassword(newPassword));
-            user.setVerified(true);
             userRepository.save(user);
             return ResponseEntity.ok("Password reset successfully!");
         }
